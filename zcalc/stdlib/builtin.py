@@ -1,13 +1,14 @@
 from zcalc.lib import CalcError, op, reduce
 
-@op()
-def all(z):
-    op_stack = z.get_stack()
-    reduce(op_stack)
-
 @op(aliases=['c'])
 def clear(z):
     z.stack.clear()
+
+@op(aliases=['dn'])
+def down(z):
+    if len(z.stack) == 0:
+        return
+    z.stack.insert(0, z.pop())
 
 @op()
 def each(z):
@@ -20,7 +21,7 @@ def each(z):
     for i in range(n):
         z.stack.extend(op_stack)
         z.run()
-        rotate(z)
+        down(z)
 
 @op(aliases=['g'])
 def get(z):
@@ -57,15 +58,22 @@ def put_stack(z):
 def reverse(z):
     z.stack.reverse()
 
-@op(aliases=['rot'])
-def rotate(z):
-    if len(z.stack) == 0:
-        return
-    z.stack.insert(0, z.pop())
-
 @op(aliases=['='])
 def run(z):
     z.run()
+
+@op(aliases=['sw'])
+def swap(z):
+    a = z.pop()
+    b = z.pop()
+    z.push(a)
+    z.push(b)
+
+@op()
+def up(z):
+    if len(z.stack) == 0:
+        return
+    z.stack.append(z.stack.pop(0))
 
 @op()
 def use(z):

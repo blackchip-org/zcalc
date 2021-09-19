@@ -180,19 +180,12 @@ def parse_float(n):
 def parse_line(line):
     entries = []
     entry = []
-    quote = None
     for char in line:
-        if not quote and char == ';':
+        if char.isspace() and len(entry) == 0:
+            continue
+        if char == ';':
             entries.append(''.join(entry))
             entry = []
-            continue
-        if not quote and char == '"' or char == '"':
-            quote = char
-            entry.append(char)
-            continue
-        if quote and char == quote:
-            quote = None
-            entry.append(char)
             continue
         entry.append(char)
     if len(entry) > 0:
