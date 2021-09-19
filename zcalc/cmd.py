@@ -23,7 +23,7 @@ def cmd():
             return
         except KeyboardInterrupt:
             return
-        z.eval(line)
+        z.do(line)
         if not args.raw:
             print(CLEAR_SCREEN)
         if z.output:

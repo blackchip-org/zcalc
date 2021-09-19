@@ -1,5 +1,6 @@
+import decimal
 import operator
-from zcalc.lib import op, reduce
+from zcalc.lib import CalcError, op, reduce
 
 @op(aliases=['+', 'a'])
 def add(z):
@@ -7,7 +8,10 @@ def add(z):
 
 @op(aliases=['/', 'd'])
 def div(z):
-    z.op2(operator.truediv, z.pop_number)
+    try:
+        z.op2(operator.truediv, z.pop_number)
+    except decimal.DivisionByZero:
+        raise CalcError('division by zero')
 
 @op()
 def frac(z):

@@ -1,5 +1,11 @@
 from zcalc.lib import CalcError, op, reduce
 
+@op(aliases=['='])
+def apply(z):
+    z.stack.append('=')
+    z.stack.extend(z.get_stack())
+    z.run()
+
 @op(aliases=['c'])
 def clear(z):
     z.stack.clear()
@@ -12,14 +18,10 @@ def down(z):
 
 @op()
 def each(z):
-    name = z.pop()
-    try:
-        op_stack = z.stacks[name]
-    except KeyError:
-        raise CalcError(f'no such stack: {name}')
+    ops = z.get_stack()
     n = len(z.stack)
     for i in range(n):
-        z.stack.extend(op_stack)
+        z.stack.extend(ops)
         z.run()
         down(z)
 
@@ -34,13 +36,7 @@ def get(z):
 
 @op(name='get-stack', aliases=['gs'])
 def get_stack(z):
-    name = z.pop()
-    try:
-        stack = z.stacks[name]
-        for item in stack:
-            z.stack.append(item)
-    except KeyError:
-        raise CalcError(f'no such stack: {name}')
+    z.stack.extend(z.get_stack())
 
 @op(aliases=['p'])
 def put(z):
@@ -58,9 +54,13 @@ def put_stack(z):
 def reverse(z):
     z.stack.reverse()
 
-@op(aliases=['='])
+@op()
 def run(z):
     z.run()
+
+@op()
+def sort(z):
+    z.stack.sort()
 
 @op(aliases=['sw'])
 def swap(z):
@@ -68,6 +68,13 @@ def swap(z):
     b = z.pop()
     z.push(a)
     z.push(b)
+
+@op(aliases=['u'])
+def undo(z):
+    if len(z.history) <= 1:
+        raise CalcError('history empty')
+    z.history.pop()
+    z.stack = z.history.pop()
 
 @op()
 def up(z):

@@ -1,4 +1,4 @@
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from importlib import import_module
 import unicodedata
 
@@ -8,6 +8,8 @@ class Env:
 
     def __init__(self, prelude=True):
         self.stack = []
+        self.history = [[]]
+        self.max_history = 10
         self.ops = {}
         self.stacks = {}
         self.vals = {}
@@ -34,6 +36,13 @@ class Env:
             self._eval_entry(entry)
             if self.error:
                 return
+
+    def do(self, line):
+        self.eval(line)
+        if len(self.history) == 0 or self.stack != self.history[-1]:
+            self.history.append(self.stack.copy())
+        if len(self.history) > self.max_history:
+            self.history = self.history[-self.max_history:]
 
     def run(self):
         if len(self.stack) == 0:
@@ -79,7 +88,7 @@ class Env:
                 raise CalcError(f'no such module: {name}')
         for export in dir(mod):
             obj = getattr(mod, export)
-            if not hasattr(obj, 'zcalc_export'):
+            if not hasattr(obj, 'zcalc_name'):
                 continue
             self.ops[obj.zcalc_name] = obj
             for alias in obj.zcalc_aliases:
@@ -168,7 +177,8 @@ def parse_decimal(n):
         return Decimal(_clean_numeric(n))
     except ValueError:
         raise CalcError(f'not a decimal: {n}')
-
+    except InvalidOperation:
+        raise CalcError(f'not a decimal: {n}')
 
 def parse_float(n):
     try:
