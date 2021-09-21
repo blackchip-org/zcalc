@@ -3,9 +3,15 @@ from argparse import ArgumentParser
 
 from .env import Env
 
-CLEAR_SCREEN = '\033[2J'
+CLEAR_SCREEN    = '\033[2J'
+MOVE_TO_BOTTOM  = '\033[200;0H' # go to line 200, column 0
+RESET           = '\033[0m'
+BOLD            = '\033[1m'
+LIGHT_GREEN     = '\033[1;32m'
+LIGHT_BLUE      = '\033[1;36m'
+BRIGHT_YELLOW   = '\033[1;93m'
 
-prompt = 'zcalc> '
+prompt = f'{LIGHT_GREEN}zcalc{RESET}> '
 
 def cmd():
     parser = ArgumentParser()
@@ -16,6 +22,7 @@ def cmd():
 
     if not args.raw:
         print(CLEAR_SCREEN)
+        print(MOVE_TO_BOTTOM)
     while True:
         try:
             line = input(prompt)
@@ -29,9 +36,12 @@ def cmd():
         if z.output:
             print(z.output)
         else:
-            for item in z.stack:
-                print(item)
-        print(f'(!) {z.error}' if z.error else '')
+            for (i, item) in enumerate(z.stack):
+                if i == len(z.stack) - 1:
+                    print(f'{BOLD}{item}{RESET}')
+                else:
+                    print(f'{LIGHT_BLUE}{item}{RESET}')
+        print(f'{BRIGHT_YELLOW}(!) {z.error}{RESET}' if z.error else '')
 
 if __name__ == '__main__':
     cmd()
