@@ -19,6 +19,8 @@ def cmd():
     args = parser.parse_args()
 
     z = Env()
+    readline.parse_and_bind("tab: complete")
+    readline.set_completer(z.completer)
 
     if not args.raw:
         print(CLEAR_SCREEN)

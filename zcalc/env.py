@@ -1,6 +1,8 @@
+import unicodedata
+
 from decimal import Decimal, InvalidOperation
 from importlib import import_module
-import unicodedata
+from pygtrie import Trie
 
 from .lib import CalcError
 
@@ -15,6 +17,7 @@ class Env:
         self.vals = {}
         self.error = None
         self.output = None
+        self.trie = Trie()
         self.use('builtin')
         if prelude:
             self.use('bit')
@@ -91,8 +94,10 @@ class Env:
             if not hasattr(obj, 'zcalc_name'):
                 continue
             self.ops[obj.zcalc_name] = obj
+            self.trie[obj.zcalc_name] = obj.zcalc_name + ' '
             for alias in obj.zcalc_aliases:
                 self.ops[alias] = obj
+                self.trie[alias] = alias + ' '
 
     def pop(self):
         try:
@@ -153,6 +158,11 @@ class Env:
             return self.stacks[name]
         except KeyError:
             raise CalcError(f'no such stack: {name}')
+
+    def completer(self, text, index):
+        vals = self.trie.values(text)
+        return None if index >= len(vals) else vals[index]
+
 
 def _clean_numeric(dirty):
     clean = []
