@@ -40,6 +40,13 @@ def neg(z):
 def norm(z):
     z.op1(lambda d: d.normalize(), z.pop_decimal)
 
+@op(aliases=['r'])
+def round(z):
+    digits = z.pop_int()
+    number = z.pop_decimal()
+    amount = '.' + ('0' * (digits - 1)) + '1'
+    z.push(number.quantize(decimal.Decimal(amount)))
+
 @op(aliases=['-', 's'])
 def sub(z):
     z.op2(operator.sub, z.pop_number)

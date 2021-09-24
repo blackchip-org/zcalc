@@ -32,6 +32,6 @@ from zcalc.stdlib import math
 def test_math(line):
     z = Env(prelude=False)
     z.use('math')
-    z.eval(line)
+    z.do(line)
     assert z.pop() == z.pop()
 

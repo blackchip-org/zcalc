@@ -22,5 +22,5 @@ from zcalc.stdlib import math
 def test_bit(line):
     z = Env(prelude=False)
     z.use('bit')
-    z.eval(line)
+    z.do(line)
     assert z.pop() == z.pop()

@@ -14,12 +14,12 @@ from zcalc.lib import CalcError
     ],
     [
         'fn "one and one" two three',
-        ['fn', '"one and one', 'two', 'three']
+        ['fn', 'one and one', 'two', 'three']
     ],
     [
         'fn "one and one',
-        ['fn', '"one and one']
+        ['fn', 'one and one']
     ],
 ])
-def test_inline_fn(line, expected):
-    assert env.parse_inline_fn(line) == expected
+def test_parse_args(line, expected):
+    assert env.parse_args(line) == expected

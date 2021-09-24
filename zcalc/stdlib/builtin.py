@@ -10,6 +10,12 @@ def apply(z):
 def clear(z):
     z.stack.clear()
 
+@op(aliases=['cp'])
+def copy(z):
+    a = z.pop()
+    z.push(a)
+    z.push(a)
+
 @op(aliases=['dn'])
 def down(z):
     if len(z.stack) == 0:
@@ -18,37 +24,12 @@ def down(z):
 
 @op()
 def each(z):
-    ops = z.get_stack()
+    ops = z.get_macro()
     n = len(z.stack)
     for i in range(n):
         z.stack.extend(ops)
         z.run()
         down(z)
-
-@op(aliases=['g'])
-def get(z):
-    name = z.pop()
-    try:
-        val = z.vals[name]
-        z.stack.append(val)
-    except KeyError:
-        raise CalcError(f'no such value: {name}')
-
-@op(name='get-stack', aliases=['gs'])
-def get_stack(z):
-    z.stack.extend(z.get_stack())
-
-@op(aliases=['p'])
-def put(z):
-    name = z.pop()
-    val = z.pop()
-    z.vals[name] = val
-
-@op(name='put-stack', aliases=['ps'])
-def put_stack(z):
-    name = z.pop()
-    z.stacks[name] = z.stack
-    z.stack = []
 
 @op(aliases=['rev'])
 def reverse(z):

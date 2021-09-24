@@ -13,7 +13,7 @@ from zcalc.env import Env
 def test_sci(line):
     z = Env(prelude=False)
     z.use('sci')
-    z.eval(line)
+    z.do(line)
     assert z.pop() == z.pop()
 
 

@@ -13,8 +13,7 @@ class Env:
         self.history = [[]]
         self.max_history = 10
         self.ops = {}
-        self.stacks = {}
-        self.vals = {}
+        self.macros = {}
         self.error = None
         self.output = None
         self.trie = Trie()
@@ -24,24 +23,32 @@ class Env:
             self.use('math')
             self.use('sci')
 
-    def eval(self, line):
+    def _enter(self, line):
         self.error = None
-        entries = parse_line(line)
-        if len(entries) == 0:
-            if self.output:
-                self.output = None
-                return
-            if len(self.stack) > 0:
-                self.stack.pop()
-                return
+        entries = parse_entries(line)
         self.output = None
         for entry in entries:
             self._eval_entry(entry)
             if self.error:
                 return
 
+    def eval(self):
+        if len(self.stack) == 0:
+            return
+        self.do(self.stack.pop())
+
     def do(self, line):
-        self.eval(line)
+        self.error = None
+        # When entering a blank line, clear output if that is being
+        # displayed. Otherwise, pop a value of the stack if able.
+        if len(line) == 0:
+            if self.output:
+                self.output = None
+                return
+            if len(self.stack) > 0:
+                self.stack.pop()
+        else:
+            self._enter(line)
         if len(self.history) == 0 or self.stack != self.history[-1]:
             self.history.append(self.stack.copy())
         if len(self.history) > self.max_history:
@@ -50,14 +57,17 @@ class Env:
     def run(self):
         if len(self.stack) == 0:
             return
-        line = self.pop()
-        self.eval(line)
+        self._enter(self.stack.pop())
 
     def _eval_entry(self, entry):
         try:
             first = entry[0] if len(entry) > 0 else ''
             if first == '[':
-                return self._eval_inline_fn(entry)
+                self._eval_inline(entry[1:])
+            elif first == '`':
+                self._define_macro(entry[1:])
+            elif first == '=':
+                self._invoke_macro(entry[1:])
             elif first == '"' or first == "'":
                 self.stack.append(entry[1:])
             elif not self._eval_op(entry):
@@ -65,13 +75,31 @@ class Env:
         except CalcError as e:
             self.error = e
 
-    def _eval_inline_fn(self, line):
-        parts = parse_inline_fn(line[1:])
-        fn = parts[0]
-        args = parts[1:]
-        for arg in args:
-            self.stack.append(arg)
-        self._eval_entry(fn)
+    def _define_macro(self, line):
+        args = parse_args(line.strip())
+        if len(args) == 0:
+            raise CalcError('macro name missing')
+        name = args[0]
+        if len(args) == 1:
+            self.macros[name] = self.stack
+            self.stack = []
+        else:
+            self.macros[name] = args[1:]
+
+    def _invoke_macro(self, line):
+        args = parse_args(line.strip())
+        if len(args) > 1:
+            raise CalcError('too many arguments')
+        name = args[0] if len(args) > 0 else '='
+        macro = self.get_macro(name)
+        for item in macro:
+            self.stack.append(item)
+            self.eval()
+
+    def _eval_inline(self, line):
+        args = parse_args(line)
+        self.stack += args[1:]
+        self._eval_entry(args[0])
 
     def _eval_op(self, name):
         name = name.strip()
@@ -152,12 +180,13 @@ class Env:
         a = pop()
         return push(op(a))
 
-    def get_stack(self):
-        name = self.pop()
+    def get_macro(self, name=None):
+        if not name:
+            name = self.pop()
         try:
-            return self.stacks[name]
+            return self.macros[name]
         except KeyError:
-            raise CalcError(f'no such stack: {name}')
+            raise CalcError(f'no such macro: {name}')
 
     def completer(self, text, index):
         vals = self.trie.values(text)
@@ -197,7 +226,7 @@ def parse_float(n):
         raise CalcError(f'not a float: ${n}')
 
 
-def parse_line(line):
+def parse_entries(line):
     entries = []
     entry = []
     for char in line:
@@ -212,25 +241,36 @@ def parse_line(line):
         entries.append(''.join(entry))
     return entries
 
-def parse_inline_fn(line):
+
+def parse_args(line):
     args = []
     arg = []
     quote = None
     for char in line:
+        # Space outside of quotes marks the end of the current argument
         if not quote and char.isspace() and len(arg) > 0:
             args.append(''.join(arg))
             arg = []
             continue
+        # Ignore whitespace if not yet parsing an argument
         if not quote and char.isspace():
             continue
+        # Is this the start of a quote?
         if not quote and (char == "'" or char == '"'):
             quote = char
-            arg.append(char)
             continue
+        # Is this the end of a quote? If so, it is also the end of the
+        # current argument
         if quote and char == quote:
             quote = None
+            args.append(''.join(arg))
+            arg = []
             continue
+        # Otherwise, add this character to the current argument
         arg.append(char)
+    # When the end of line is reached, finish the current argument
     if len(arg) > 0:
         args.append(''.join(arg))
     return args
+
+
