@@ -37,7 +37,15 @@ class Env:
             return
         self.do(self.stack.pop())
 
-    def do(self, line):
+    def do(self, input):
+        if not isinstance(input, list):
+            input = [input]
+        for line in input:
+            self._do_line(str(line))
+            if self.error:
+                return
+
+    def _do_line(self, line):
         self.error = None
         # When entering a blank line, clear output if that is being
         # displayed. Otherwise, pop a value of the stack if able.
