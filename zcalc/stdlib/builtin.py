@@ -28,7 +28,7 @@ def each(z):
     n = len(z.stack)
     for i in range(n):
         z.stack.extend(ops)
-        z.run()
+        z.eval()
         down(z)
 
 @op(aliases=['rev'])

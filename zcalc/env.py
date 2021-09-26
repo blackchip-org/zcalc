@@ -1,3 +1,4 @@
+import re
 import unicodedata
 
 from decimal import Decimal, InvalidOperation
@@ -23,29 +24,18 @@ class Env:
             self.use('math')
             self.use('sci')
 
-    def _enter(self, line):
-        self.error = None
-        entries = parse_entries(line)
-        self.output = None
-        for entry in entries:
-            self._eval_entry(entry)
-            if self.error:
-                return
-
     def eval(self):
+        self.error = None
         if len(self.stack) == 0:
             return
-        self.do(self.stack.pop())
+        entry = self.stack.pop()
+        try:
+            if not self._eval_op(entry):
+                self.stack.append(entry.strip())
+        except CalcError as e:
+            self.error = e
 
-    def do(self, input):
-        if not isinstance(input, list):
-            input = [input]
-        for line in input:
-            self._do_line(str(line))
-            if self.error:
-                return
-
-    def _do_line(self, line):
+    def do(self, line):
         self.error = None
         # When entering a blank line, clear output if that is being
         # displayed. Otherwise, pop a value of the stack if able.
@@ -56,32 +46,31 @@ class Env:
             if len(self.stack) > 0:
                 self.stack.pop()
         else:
-            self._enter(line)
+            entries = parse_entries(line)
+            for entry in entries:
+                self._eval_entry(entry)
+                if self.error:
+                    break
         if len(self.history) == 0 or self.stack != self.history[-1]:
             self.history.append(self.stack.copy())
         if len(self.history) > self.max_history:
             self.history = self.history[-self.max_history:]
 
-    def run(self):
-        if len(self.stack) == 0:
-            return
-        self._enter(self.stack.pop())
-
     def _eval_entry(self, entry):
-        try:
-            first = entry[0] if len(entry) > 0 else ''
-            if first == '[':
-                self._eval_inline(entry[1:])
-            elif first == '`':
-                self._define_macro(entry[1:])
-            elif first == '=':
-                self._invoke_macro(entry[1:])
-            elif first == '"' or first == "'":
-                self.stack.append(entry[1:])
-            elif not self._eval_op(entry):
-                self.stack.append(entry.strip())
-        except CalcError as e:
-            self.error = e
+        first = entry[0] if len(entry) > 0 else ''
+        if first == ',':
+            self._eval_items(entry[1:])
+        elif first == '[':
+            self._eval_prefix(entry[1:])
+        elif first == '`':
+            self._define_macro(entry[1:])
+        elif first == '=':
+            self._invoke_macro(entry[1:])
+        elif first == '"' or first == "'":
+            self.stack.append(entry[1:])
+        else:
+            self.stack.append(entry)
+            self.eval()
 
     def _define_macro(self, line):
         args = parse_args(line.strip())
@@ -104,17 +93,27 @@ class Env:
             self.stack.append(item)
             self.eval()
 
-    def _eval_inline(self, line):
+    def _eval_prefix(self, line):
         args = parse_args(line)
         self.stack += args[1:]
         self._eval_entry(args[0])
+
+    def _eval_items(self, line):
+        args = parse_args(line)
+        for arg in args:
+            self.push(arg)
+            self.eval()
+            if self.error:
+                break
 
     def _eval_op(self, name):
         name = name.strip()
         op = self.ops.get(name)
         if not op:
             return False
-        op(self)
+        result = op(self)
+        if result is not None:
+            self.push(result)
         return True
 
     def use(self, name):
@@ -127,6 +126,14 @@ class Env:
                 raise CalcError(f'no such module: {name}')
         for export in dir(mod):
             obj = getattr(mod, export)
+            if hasattr(obj, 'zcalc_mod'):
+                obj(self)
+                continue
+            if hasattr(obj, 'zcalc_ops'):
+                vals = obj()
+                for (name, fn) in vals:
+                    self.ops[name] = fn
+                    self.trie[name] = name + ' '
             if not hasattr(obj, 'zcalc_name'):
                 continue
             self.ops[obj.zcalc_name] = obj
@@ -164,7 +171,17 @@ class Env:
         raise CalcError(f'not a number: ${n}')
 
     def push(self, v):
-        self.stack.append(str(v))
+        s = str(v)
+        if isinstance(v, Decimal):
+            if v.is_zero():
+                s = '0'
+            # Remove any trailing zeros after the decimal point
+            if '.' in s:
+                s = s.rstrip('0').rstrip('.')
+            # Replace with a more modern looking exponent
+            s = s.replace('E+', 'e')
+            s = s.replace('E-', 'e-')
+        self.stack.append(s)
 
     def binary_op(self, pop, push, op):
         b = pop()

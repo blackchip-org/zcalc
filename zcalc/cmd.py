@@ -16,12 +16,16 @@ prompt = f'{LIGHT_GREEN}zcalc{RESET}> '
 def cmd():
     parser = ArgumentParser()
     parser.add_argument('-r', '--raw', action='store_true')
+    parser.add_argument('-u', '--use', action='append')
     args = parser.parse_args()
 
     z = Env()
     readline.parse_and_bind('tab: complete')
     readline.set_completer(z.completer)
     readline.set_completer_delims('')
+    if args.use is not None:
+        for mod in args.use:
+            z.use(mod.strip())
 
     if not args.raw:
         print(CLEAR_SCREEN)
