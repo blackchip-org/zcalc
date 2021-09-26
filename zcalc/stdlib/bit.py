@@ -21,11 +21,11 @@ def oct_(z):
 def or_(z):
     return z.op2(operator.or_, z.pop_int)
 
-@op(aliases=['shl', '<<'])
+@op(name='shift-left', aliases=['shl', '<<'])
 def shift_left(z):
     return z.op2(operator.lshift, z.pop_int)
 
-@op(aliases=['shr', '>>'])
+@op(name='shift-right', aliases=['shr', '>>'])
 def shift_right(z):
     return z.op2(operator.rshift, z.pop_int)
 
