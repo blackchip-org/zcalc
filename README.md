@@ -9,9 +9,16 @@ Work in progress.
 To run:
 
 ```bash
-pip3 install -e .
+pip install -e .
 zcalc
 ```
+
+Setup python 3.7 environment on macOS:
+
+```bash
+brew install python@3.7
+
+
 
 ## License
 
