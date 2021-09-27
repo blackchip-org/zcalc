@@ -1,7 +1,7 @@
 import re
 import unicodedata
 
-from decimal import Decimal, InvalidOperation
+from decimal import Decimal, InvalidOperation, getcontext
 from importlib import import_module
 from pygtrie import Trie
 
@@ -15,6 +15,7 @@ class Env:
         self.max_history = 10
         self.ops = {}
         self.macros = {}
+        self.info = None
         self.error = None
         self.output = None
         self.trie = Trie()
@@ -23,8 +24,11 @@ class Env:
             self.use('bit')
             self.use('math')
             self.use('sci')
+            self.use('str')
+        getcontext().prec = 16
 
     def eval(self):
+        self.info = None
         self.error = None
         if len(self.stack) == 0:
             return
@@ -36,12 +40,14 @@ class Env:
             self.error = e
 
     def do(self, line):
+        self.info = None
         self.error = None
         # When entering a blank line, clear output if that is being
         # displayed. Otherwise, pop a value of the stack if able.
         if len(line) == 0:
-            if self.output:
+            if self.output or self.info:
                 self.output = None
+                self.input = None
                 return
             if len(self.stack) > 0:
                 self.stack.pop()

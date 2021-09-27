@@ -40,6 +40,15 @@ def neg(z):
 def norm(z):
     z.op1(lambda d: d.normalize(), z.pop_decimal)
 
+@op()
+def prec(z):
+    places = z.pop_int()
+    decimal.getcontext().prec = places
+
+@op(name='?prec')
+def prec_q(z):
+    z.info = f'{decimal.getcontext().prec} places'
+
 @op(aliases=['r'])
 def round(z):
     digits = z.pop_int()

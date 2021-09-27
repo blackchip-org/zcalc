@@ -1,5 +1,13 @@
+import math
 import operator
-from zcalc.lib import op, reduce
+from zcalc.lib import op, ops
+
+@ops()
+def const():
+    return [
+        ('e',   lambda z: math.e),
+        ('pi',  lambda z: math.pi),
+    ]
 
 @op(name='abs')
 def abs_(z):

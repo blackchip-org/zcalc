@@ -48,7 +48,12 @@ def cmd():
                     print(f'{BOLD}{item}{RESET}')
                 else:
                     print(f'{LIGHT_BLUE}{item}{RESET}')
-        print(f'{BRIGHT_YELLOW}(!) {z.error}{RESET}' if z.error else '')
+        if z.error:
+            print(f'{BRIGHT_YELLOW}(!) {z.error}{RESET}')
+        elif z.info:
+            print(f'{LIGHT_BLUE}(?) {z.info}{RESET}')
+        else:
+            print()
 
 if __name__ == '__main__':
     cmd()
