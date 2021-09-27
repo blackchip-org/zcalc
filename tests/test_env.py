@@ -23,3 +23,4 @@ from zcalc.lib import CalcError
 ])
 def test_parse_args(line, expected):
     assert env.parse_args(line) == expected
+

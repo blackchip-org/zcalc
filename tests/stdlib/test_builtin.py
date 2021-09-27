@@ -32,3 +32,7 @@ def test_builtin_history():
     z.do('[each double')
     z.do('undo')
     assert z.stack == ['2', '4', '6']
+    z.do('undo')
+    assert z.stack == ['1', '2', '3']
+    z.do('undo')
+    assert z.stack == ['1', '2']
