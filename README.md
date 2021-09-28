@@ -23,6 +23,15 @@ python -m pip install --upgrade pip
 pip install -e .
 ```
 
+Setup environment on Windows:
+
+```powershell
+python -m venv venv
+.\venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+pip install -e .
+```
+
 Running tests:
 
 ```bash
