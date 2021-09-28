@@ -1,7 +1,20 @@
-import readline
+import os
 from argparse import ArgumentParser
 
 from .env import Env
+
+try:
+    import readline
+except ModuleNotFoundError:
+    # For windows
+    from pyreadline import Readline
+    readline = Readline()
+
+# To enable ANSI codes in Windows
+if os.name == 'nt':
+    import ctypes
+    kernel32 = ctypes.windll.kernel32
+    kernel32.SetConsoleMode(kernel32.GetStdHandle(-11), 7)
 
 CLEAR_SCREEN    = '\033[2J'
 MOVE_TO_BOTTOM  = '\033[200;0H' # go to line 200, column 0
