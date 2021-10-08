@@ -63,20 +63,23 @@ class Env:
             self.history = self.history[-self.max_history:]
 
     def _eval_entry(self, entry):
-        first = entry[0] if len(entry) > 0 else ''
-        if first == ',':
-            self._eval_items(entry[1:])
-        elif first == '[':
-            self._eval_prefix(entry[1:])
-        elif first == '`':
-            self._define_macro(entry[1:])
-        elif first == '=':
-            self._invoke_macro(entry[1:])
-        elif first == '"' or first == "'":
-            self.stack.append(entry[1:])
-        else:
-            self.stack.append(entry)
-            self.eval()
+        try:
+            first = entry[0] if len(entry) > 0 else ''
+            if first == ',':
+                self._eval_items(entry[1:])
+            elif first == '[':
+                self._eval_prefix(entry[1:])
+            elif first == '`':
+                self._define_macro(entry[1:])
+            elif first == '=':
+                self._invoke_macro(entry[1:])
+            elif first == '"' or first == "'":
+                self.stack.append(entry[1:])
+            else:
+                self.stack.append(entry)
+                self.eval()
+        except CalcError as e:
+            self.error = e
 
     def _define_macro(self, line):
         args = parse_args(line.strip())
