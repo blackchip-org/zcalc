@@ -67,10 +67,3 @@ def up(z):
 def use(z):
     z.use(z.pop())
 
-@op()
-def vals(z):
-    output = []
-    names = sorted(list(z.vals.keys()))
-    for name in names:
-        output.append(f'{name} = {z.vals[name]}')
-    z.output = '\n'.join(output)
