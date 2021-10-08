@@ -121,7 +121,7 @@ Example:
 
 Import the specified module.
 
-    import ( a -- )
+    use ( a -- )
 
 Example:
 
