@@ -1,6 +1,7 @@
 import pytest
 
 from zcalc import env
+from zcalc.env import Env
 from zcalc.lib import CalcError
 
 @pytest.mark.parametrize('line,expected', [
@@ -23,4 +24,3 @@ from zcalc.lib import CalcError
 ])
 def test_parse_args(line, expected):
     assert env.parse_args(line) == expected
-

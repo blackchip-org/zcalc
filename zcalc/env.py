@@ -12,7 +12,7 @@ class Env:
     def __init__(self, prelude=True):
         self.stack = []
         self.history = [[]]
-        self.max_history = 10
+        self.max_history = 25
         self.ops = {}
         self.macros = {}
         self.info = None
