@@ -42,12 +42,12 @@ def norm(z):
 
 @op()
 def prec(z):
+    z.info = f'{decimal.getcontext().prec} places'
+
+@op(name='prec-set')
+def prec_set(z):
     places = z.pop_int()
     decimal.getcontext().prec = places
-
-@op(name='?prec')
-def prec_q(z):
-    z.info = f'{decimal.getcontext().prec} places'
 
 @op(aliases=['r'])
 def round(z):

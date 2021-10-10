@@ -1,8 +1,25 @@
 # builtin
 
-## apply (=)
+Operations that are always available in zcalc. These are mostly stack
+manipulation operations, shortcuts, or administrative tasks.
+
+| Operation           | Alias | Description
+|---------------------|-------|------------
+| [apply](#apply)     | `=`   | Invoke the `=` macro
+| [clear](#clear)     | `c`   | Clears the stack
+| [copy](#copy)       | `cp`  | Creates a copy of the top item on the stack
+| [down](#down)       | `dn`  | Rotates the stack by moving all items down
+| [each](#each)       |       | Applies an operation to each item on the stack
+| [reverse](#reverse) | `rev` | Reverses the items on the stack
+| [sort](#sort)       |       | Sorts the items on the stack
+| [swap](#swap)       | `sw`  | Swap first two items on the stack
+| [use](#use)         |       | Import operations from module
+
+## apply
 
 Invoke the `=` macro.
+
+Alias: `=`
 
 Example:
 
@@ -12,11 +29,13 @@ Example:
 | `3`              | `3`
 | `=`              | `6`
 
-## clear (c)
+## clear
 
 Clears the stack.
 
     clear ( ... -- )
+
+Alias: `cp`
 
 Example:
 
@@ -27,11 +46,13 @@ Example:
 | `3`     | `1 ; 2 ; 3`
 | `c`     |
 
-## copy (cp)
+## copy
 
 Creates a copy of the top item on the stack.
 
     copy ( a -- a a )
+
+Alias: `cp`
 
 Example:
 
@@ -40,11 +61,13 @@ Example:
 | `1`     | `1`
 | `cp`    | `1 ; 1`
 
-## down (dn)
+## down
 
 Rotates the stack by moving all items down. The top of the stack moves to the bottom of the stack.
 
     down ( a b c -- c a b )
+
+Alias: `dn`
 
 Example:
 
@@ -71,11 +94,13 @@ Example:
 | `3`              | `1 ; 2 ; 3`
 | `[each double`   | `2 ; 4 ; 6`
 
-## reverse (rev)
+## reverse
 
 Reverses the items on the stack.
 
     reverse ( a b c -- c b a )
+
+Alias: `rev`
 
 Example:
 
@@ -102,11 +127,13 @@ Example:
 | `3`     | `2 ; 4 ; 1 ; 3`
 | `sort`  | `1 ; 2 ; 3 ; 4`
 
-## swap (sw)
+## swap
 
 Swap the first two items on the stack.
 
     swap ( a b c -- a c b )
+
+Alias: `sw`
 
 Example:
 
@@ -119,7 +146,7 @@ Example:
 
 ## use
 
-Import the specified module.
+Import operations from the specified module.
 
     use ( a -- )
 
