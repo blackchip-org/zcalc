@@ -13,7 +13,7 @@ zcalc
 
 ## Usage
 
-When running `zcalc` a prompt is presented. When a line is entered and the
+When running `zcalc` a prompt is presented. When a line is entered at the
 prompt, it first checked to see if it is the name of an operation. If so, that
 operation is performed. Otherwise, the line is placed on the stack.
 
@@ -25,7 +25,7 @@ An example of adding two numbers:
 | `2`              | `1 ; 2`
 | `a`              | `3`
 
-With the first line, `1`, it does not match an operation so its value is
+The first line, `1`, does not match an operation so its value is
 placed on the stack. The next line is a `2` and is also placed on the stack.
 When `a` is entered, that matches the addition operation. The first two
 items are popped from the stack, the result is added, and the result is
@@ -131,7 +131,7 @@ arguments are pushed to the stack.
 | `[a 2 3 4`       | `1 ; 2 ; 7`
 
 Leading and trailing whitespace are not significant with arguments. Surround
-with arguments with single quotes if necessary:
+arguments with single quotes if necessary:
 
 | Input            | Stack
 |------------------|-------------|
