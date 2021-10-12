@@ -2,19 +2,19 @@
 
 Basic mathematical operations.
 
-| Operation             | Alias    | Description
-|-----------------------|----------|------------
-| [add](#add)           | `a`, `+` | Addition
-| [div](#div)           | `d`, `/` | Division
-| [frac](#frac)         |          | Converts to fraction
-| [int](#int)           |          | Truncates to an integral value
-| [mod](#mod)           |          | Remainder of division
-| [mul](#mul)           | `m`, `*` | Multiplication
-| [prec](#prec)         |          | Gets precision used in decimal operations
-| [prec-set](#prec-set) |          | Set precision used in decimal operations
-| [round](#round)       | `r`      | Rounds a number
-| [sub](#sub)           | `s`, `-` | Subtraction
-| [sum](#sum)           |          | Sum all items on the stack
+| Operation               | Alias    | Description
+|-------------------------|----------|------------
+| [add](#add)             | `a`, `+` | Addition
+| [div](#div)             | `d`, `/` | Division
+| [frac](#frac)           |          | Converts to fraction
+| [int](#int)             |          | Truncates to an integral value
+| [mod](#mod)             |          | Remainder of division
+| [mul](#mul)             | `m`, `*` | Multiplication
+| [prec](#prec)           |          | Sets precision used in decimal operations
+| [prec-info](#prec-info) |          | Gets precision used in decimal operations
+| [round](#round)         | `r`      | Rounds a number
+| [sub](#sub)             | `s`, `-` | Subtraction
+| [sum](#sum)             |          | Sum all items on the stack
 
 ## add
 
@@ -110,10 +110,6 @@ Example:
 
 ## prec
 
-Displays the number of significant digits used in decimal operations. Use `prec-set` to change this value. The default value is `16`.
-
-## prec-set
-
 Changes the number of significant digits used in decimal operations.
 
 Example:
@@ -124,10 +120,14 @@ Example:
 | `3`           | `1 ; 3`
 | `d`           | `0.6666666666666667`
 |               |
-| `[prec-set 2` |
+| `[prec 2`     |
 | `2`           | `1`
 | `3`           | `1 ; 3`
 | `d`           | `0.67`
+
+## prec-info
+
+Displays the number of significant digits used in decimal operations. Use `prec` to change this value. The default value is `16`.
 
 ## round
 

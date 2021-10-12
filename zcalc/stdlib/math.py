@@ -2,6 +2,19 @@ import decimal
 import operator
 from zcalc.lib import CalcError, op, reduce
 
+round_rules_parse = {
+    'ceiling': decimal.ROUND_CEILING,
+    'down': decimal.ROUND_DOWN,
+    'floor': decimal.ROUND_FLOOR,
+    'half-down': decimal.ROUND_HALF_DOWN,
+    'half-even': decimal.ROUND_HALF_EVEN,
+    'half-up': decimal.ROUND_HALF_UP,
+    'up': decimal.ROUND_UP,
+    '05up': decimal.ROUND_05UP,
+}
+
+round_rules_format = {v: k for k, v in round_rules_parse.items() }
+
 @op(aliases=['+', 'a'])
 def add(z):
     z.op2(operator.add, z.pop_number)
@@ -41,13 +54,27 @@ def norm(z):
     z.op1(lambda d: d.normalize(), z.pop_decimal)
 
 @op()
-def prec(z):
-    z.info = f'{decimal.getcontext().prec} places'
+def places(z):
+    places = z.pop_int()
+    if places < 0:
+        raise CalcError('invalid number of places')
+    z.places = places
 
-@op(name='prec-set')
-def prec_set(z):
+@op(name='places-info')
+def places_info(z):
+    if z.places:
+        z.info = str(z.places)
+    else:
+        z.info = 'auto'
+
+@op()
+def prec(z):
     places = z.pop_int()
     decimal.getcontext().prec = places
+
+@op(name='prec-info')
+def prec_info(z):
+    z.info = str(decimal.getcontext().prec)
 
 @op(aliases=['r'])
 def round(z):
@@ -55,6 +82,19 @@ def round(z):
     number = z.pop_decimal()
     amount = '.' + ('0' * (digits - 1)) + '1'
     z.push(number.quantize(decimal.Decimal(amount)))
+
+@op(name='round-rule')
+def round_rule(z):
+    str_rule = z.pop()
+    try:
+        rule = round_rules_parse[str_rule]
+        decimal.getcontext().rounding = rule
+    except KeyError:
+        raise CalcError(f'invalid round rule: {str_rule}')
+
+@op(name='round-rule-info')
+def round_rule_info(z):
+    z.info = round_rules_format[decimal.getcontext().rounding]
 
 @op(aliases=['-', 's'])
 def sub(z):

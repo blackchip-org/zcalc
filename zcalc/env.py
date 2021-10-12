@@ -19,6 +19,7 @@ class Env:
         self.error = None
         self.output = None
         self.trie = Trie()
+        self.places = 0
         self.use('builtin')
         if prelude:
             self.use('bit')
@@ -35,7 +36,8 @@ class Env:
         entry = self.stack.pop()
         try:
             if not self._eval_op(entry):
-                self.stack.append(entry.strip())
+                #self.stack.append(entry.strip())
+                self.push(entry.strip())
         except CalcError as e:
             self.error = e
 
@@ -182,14 +184,26 @@ class Env:
     def push(self, v):
         s = str(v)
         if isinstance(v, Decimal):
-            if v.is_zero():
-                s = '0'
-            # Remove any trailing zeros after the decimal point
-            if '.' in s:
-                s = s.rstrip('0').rstrip('.')
+            if self.places:
+                spec = '{:.' + str(self.places) + 'f}'
+                s = spec.format(v)
+            else:
+                if v.is_zero():
+                    s = '0'
+                # Remove any trailing zeros after the decimal point
+                if '.' in s:
+                    s = s.rstrip('0').rstrip('.')
             # Replace with a more modern looking exponent
             s = s.replace('E+', 'e')
             s = s.replace('E-', 'e-')
+        if isinstance(v, str):
+            if self.places:
+                try:
+                    d = Decimal(v)
+                    spec = '{:.' + str(self.places) + 'f}'
+                    s = spec.format(d)
+                except InvalidOperation:
+                    pass
         self.stack.append(s)
 
     def binary_op(self, pop, push, op):
