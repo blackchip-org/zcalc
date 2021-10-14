@@ -20,7 +20,7 @@ manipulation operations, shortcuts, or administrative tasks.
 
 Invoke the `=` macro.
 
-    clear ( any... -- any... )
+   apply ( any... -- any... )
 
 Alias: `=`
 
@@ -177,7 +177,7 @@ Example:
 | `1`     | `1`
 | `2`     | `1 ; 2`
 | `3`     | `1 ; 2 ; 3`
-| `up`    | `3 ; 1 ; 2`
+| `up`    | `2 ; 3 ; 1`
 
 ## use
 
