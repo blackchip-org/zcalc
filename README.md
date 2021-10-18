@@ -7,9 +7,20 @@ A fun RPN calculator. If you find it fun too, let me know. This is a constant wo
 To install and run from PyPI:
 
 ```bash
+python3 -m pip install --upgrade pip
 pip3 install zcalc
 zcalc
 ```
+
+## Goals
+
+- Have fun!
+- Easy to type. Avoid the shift key in the common case. Prefer the name of `a` for addition over `+`
+- Use fixed point arithmetic when possible. Prefer `3.3` for `1.1 + 2.2` over `3.3000000000000003`
+- Auto-completion
+  - Operations should have descriptive names and easily found by auto complete.
+  - Commonly used operations should have easy-to-type aliases. Example: `scientific-notation` and `sn`.
+- Documentation should also be test cases.
 
 ## Usage
 
@@ -48,7 +59,7 @@ The basic math operations are as follows:
 | `mul`, `*`, `m`  | multiplication
 | `div`, `/`, `d`  | division
 
-More basic math operations can be found in the [math](doc/math.md) module documentation.
+More basic math operations can be found in the [math](doc/stdlib/math.md) module documentation.
 
 ### Quoting, Multi-lines, and Whitespace
 
@@ -208,7 +219,7 @@ Apply a macro to each item in the stack with `each`:
 | `3`              | `1 ; 2 ; 3`
 | `[each double`   | `2 ; 4 ; 6`
 
-More stack operations can be found in the [builtin](doc/builtin.md) module documentation.
+More stack operations can be found in the [builtin](doc/stdlib/builtin.md) module documentation.
 
 ### Modules
 
