@@ -8,9 +8,9 @@ Bitwise operations.
 | [bin](#bin)                 |             | Convert to a binary integer
 | [hex](#hex)                 |             | Convert to a hexadecimal integer
 | [oct](#oct)                 |             | Convert to an octal integer
-| [or](#or)                   | `|`         | Bitwise or
+| [or](#or)                   | `` \| ``    | Bitwise or
 | [shift-left](#shift-left)   | `<<`, `shl` | Shift bits left
-| [shift-right](#shift-right) | `<<`, `shl` | Shift bits right
+| [shift-right](#shift-right) | `>>`, `shr` | Shift bits right
 | [xor](#xor)                 | `^`         | Bitwise exclusive-or
 
 ## and
@@ -44,7 +44,7 @@ Example:
 
 ## dec
 
-Convert in integer to decimal.
+Convert in integer \to decimal.
 
     dec ( int -- int )
 

@@ -235,14 +235,14 @@ the submodules are included. To include only a submodule, use the following:
 
 The list of modules available are as follows:
 
-| Name                          | Auto?     | Description
-|-------------------------------|-----------|----------------|
-| [bit](doc/bit.md)             | prelude   | Bitwise operations
-| [builtin](doc/builtin.md)     | always    | Builtin operations
-| [math](doc/math.md)           | prelude   | Basic math operations
-| [sci](doc/sci.md)             | prelude   | Scientific math operations
-| [str](doc/str.md)             | prelude   | String operations
-| [unit.temp](doc/unit/temp.md) |           | Temperature conversions
+| Name                                 | Auto?     | Description
+|--------------------------------------|-----------|----------------|
+| [bit](doc/stdlib/bit.md)             | prelude   | Bitwise operations
+| [builtin](doc/stdlib/builtin.md)     | always    | Builtin operations
+| [math](doc/stdlib/math.md)           | prelude   | Basic math operations
+| [sci](doc/stdlib/sci.md)             | prelude   | Scientific math operations
+| [str](doc/stdlib/str.md)             | prelude   | String operations
+| [unit.temp](doc/stdlib/unit/temp.md) |           | Temperature conversions
 
 ## Development Setup
 
