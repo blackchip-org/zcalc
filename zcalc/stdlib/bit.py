@@ -9,6 +9,10 @@ def and_(z):
 def bin_(z):
     return z.op1(bin, z.pop_int)
 
+@op()
+def dec(z):
+    return z.op1(int, z.pop_int)
+
 @op(name='hex')
 def hex_(z):
     return z.op1(hex, z.pop_int)

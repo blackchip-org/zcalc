@@ -19,11 +19,14 @@ def backquoted(s):
     return s
 
 def build_markdown_test(base_name, f):
+    module = ''
     tests = []
     name = None
     table = []
     in_table = False
     for line in f:
+        if line.startswith('# '):
+            module = line[2:].strip()
         if line.startswith('#'):
             name = base_name + ': ' + ' '.join(line.split()[1:])
         if line.startswith('| Input'):
@@ -38,10 +41,10 @@ def build_markdown_test(base_name, f):
         else:
             in_table = False
             if len(table) > 0:
-                tests.append((name, table))
+                tests.append((module, name, table))
                 table = []
     if len(table) > 0:
-        tests.append((name, table))
+        tests.append((module, name, table))
     return tests
 
 def build_markdown_tests():
@@ -54,9 +57,10 @@ def build_markdown_tests():
                 tests.extend(build_markdown_test(doc_file.name, f))
     return tests
 
-@pytest.mark.parametrize('op,table', build_markdown_tests())
-def test_markdown(op, table):
+@pytest.mark.parametrize('module,op,table', build_markdown_tests())
+def test_markdown(module, op, table):
     z = Env()
+    z.use(module)
     print(f'| {"line":15} | {"actual":18} | {"expected"}')
     for (line, expected) in table:
         z.do(line)
